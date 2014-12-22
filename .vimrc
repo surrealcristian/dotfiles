@@ -34,6 +34,12 @@ Plugin 'scrooloose/nerdtree'
 " Lean & mean status/tabline
 Plugin 'bling/vim-airline'
 
+" Snippets engine (require python support)
+Plugin 'SirVer/ultisnips'
+
+" Snippets for many languages
+Plugin 'honza/vim-snippets'
+
 " this line goes after Plugin definitions
 call vundle#end()
 
@@ -79,6 +85,9 @@ set number
 
 " always show status bar
 set ls=2
+
+" open more than 10 tabs
+set tabpagemax=999
 
 " leader mapping
 let mapleader=","
@@ -153,3 +162,13 @@ map <F3> :NERDTreeToggle<CR>
 nmap ,t :NERDTreeFind<CR>
 " don;t show these file types
 let NERDTreeIgnore = []
+
+" ultisnips -------------------------
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
