@@ -22,6 +22,9 @@ Plugin 'gmarik/Vundle.vim'
 
 " plugins on github repos -----------------------------
 
+" Color scheme
+Plugin 'tomasr/molokai'
+
 " Code and files fuzzy finder
 Plugin 'kien/ctrlp.vim'
 
