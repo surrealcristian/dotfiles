@@ -1,6 +1,7 @@
 " ============================================================================
 " Vundle initialization
 " Avoid modify this section, unless you are very sure of what you are doing
+" =============================================================================
 
 " be iMproved, required
 set nocompatible
@@ -20,7 +21,7 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
-" plugins on github repos -----------------------------
+" plugins on github repos -----------------------------------------------------
 
 " Color scheme
 Plugin 'tomasr/molokai'
@@ -34,6 +35,12 @@ Plugin 'scrooloose/nerdcommenter'
 " Better file browser
 Plugin 'scrooloose/nerdtree'
 
+" Class outline viewer
+Plugin 'majutsushi/tagbar'
+
+" Syntax checker / linter
+"Plugin 'scrooloose/syntastic'
+
 " Lean & mean status/tabline
 Plugin 'bling/vim-airline'
 
@@ -42,6 +49,16 @@ Plugin 'SirVer/ultisnips'
 
 " Snippets for many languages
 Plugin 'honza/vim-snippets'
+
+" Trailing whitespaces solution
+Plugin 'ntpeters/vim-better-whitespace'
+
+" Sublime Text style multiple selections
+Plugin 'terryma/vim-multiple-cursors'
+
+" Golang support
+Plugin 'fatih/vim-go'
+
 
 " this line goes after Plugin definitions
 call vundle#end()
@@ -52,6 +69,7 @@ filetype indent on
 
 " ============================================================================
 " Vim settings and mappings
+" =============================================================================
 
 set title
 
@@ -66,7 +84,9 @@ set smartindent
 set t_Co=256
 
 " default sublime colorscheme
-colorscheme molokai
+"colorscheme molokai
+colorscheme elflord
+"colorscheme ron
 
 " highlight the current line
 set cursorline
@@ -86,6 +106,9 @@ set nowrap
 " display line numbers
 set number
 
+" display relative line numbers
+set norelativenumber
+
 " always show status bar
 set ls=2
 
@@ -104,6 +127,13 @@ set smartcase
 " use multiple of shiftwidth when indenting with '<' and '>'
 set shiftround
 
+" new horizontal split are created below the actual
+set splitbelow
+set splitright
+
+" when scrolling, keep the cursor 3 lines away from screen border
+set scrolloff=3
+
 " tab navigation mappings
 map tn :tabn<CR>
 map tp :tabp<CR>
@@ -115,8 +145,20 @@ map tm :tabm
 map tt :tabnew
 map ts :tab split<CR>
 
-" when scrolling, keep the cursor 3 lines away from screen border
-set scrolloff=3
+
+
+
+" simple recursive grep
+" both recursive grep commands with internal or external (fast) grep
+command! -nargs=1 RecurGrep lvimgrep /<args>/gj ./**/*.* | lopen | set nowrap
+command! -nargs=1 RecurGrepFast silent exec 'lgrep! <q-args> ./**/*.*' | lopen
+" mappings to call them
+nmap ,R :RecurGrep
+nmap ,r :RecurGrepFast
+
+
+
+
 
 " better backup, swap and undos storage
 set directory=~/.vim/dirs/tmp " directory to place swap files in
@@ -145,8 +187,9 @@ set runtimepath^=~/.vim/bundle/ctrlp
 
 " =============================================================================
 " Plugins settings and mappings
+" =============================================================================
 
-" Ctrlp -----------------------------
+" Ctrlp -----------------------------------------------------------------------
 
 let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
 let g:ctrlp_clear_cache_on_exit=0
@@ -157,7 +200,7 @@ endif
 " more results
 "let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:20,results:20'
 
-" NERDTree --------------------------
+" NERDTree --------------------------------------------------------------------
 
 " toggle nerdtree display
 map <F3> :NERDTreeToggle<CR>
@@ -166,12 +209,66 @@ nmap ,t :NERDTreeFind<CR>
 " don;t show these file types
 let NERDTreeIgnore = []
 
-" ultisnips -------------------------
+" tagbar ----------------------------------------------------------------------
+nmap <F8> :TagbarOpenAutoClose<CR>
 
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+" syntastic -------------------------------------------------------------------
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+
+" ultisnips -------------------------------------------------------------------
+
+" Trigger configuration. Do not use <tab> if you use
+" https://github.com/Valloric/YouCompleteMe.
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+
+
+" =============================================================================
+" Filetypes
+" =============================================================================
+
+au BufRead,BufNewFile *.md set filetype=markdown
+
+" =============================================================================
+" Functions
+" =============================================================================
+
+function! GetVisualSelection()
+  " Why is this not a built-in Vim script function?!
+  let [lnum1, col1] = getpos("'<")[1:2]
+  let [lnum2, col2] = getpos("'>")[1:2]
+  let lines = getline(lnum1, lnum2)
+  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+  let lines[0] = lines[0][col1 - 1:]
+
+  return join(lines, "\n")
+endfunction
+
+function! DatabaseQuery() range
+    let sql = GetVisualSelection()
+    let output = system('db query "' . sql . '" --no-ansi')
+
+    split DatabaseQueryOutput
+    setlocal buftype=nofile
+
+    normal! ggdG
+    call append(0, split(output, '\v\n'))
+    normal! gg
+endfunction
+
+" =============================================================================
+" Mappings
+" =============================================================================
+
+vmap ,q :call DatabaseQuery()<CR>
