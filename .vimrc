@@ -1,4 +1,4 @@
-" ============================================================================
+" =============================================================================
 " Vundle initialization
 " Avoid modify this section, unless you are very sure of what you are doing
 " =============================================================================
@@ -18,13 +18,13 @@ call vundle#begin()
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
 
+
+" =============================================================================
+" Plugins
+" =============================================================================
+
 " let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
-
-" plugins on github repos -----------------------------------------------------
-
-" Color scheme
-Plugin 'tomasr/molokai'
+Plugin 'VundleVim/Vundle.vim'
 
 " Code and files fuzzy finder
 Plugin 'kien/ctrlp.vim'
@@ -38,11 +38,8 @@ Plugin 'scrooloose/nerdtree'
 " Class outline viewer
 Plugin 'majutsushi/tagbar'
 
-" Syntax checker / linter
-"Plugin 'scrooloose/syntastic'
-
 " Lean & mean status/tabline
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
 
 " Snippets engine (require python support)
 Plugin 'SirVer/ultisnips'
@@ -56,9 +53,6 @@ Plugin 'ntpeters/vim-better-whitespace'
 " Sublime Text style multiple selections
 Plugin 'terryma/vim-multiple-cursors'
 
-" Golang support
-Plugin 'fatih/vim-go'
-
 
 " this line goes after Plugin definitions
 call vundle#end()
@@ -66,6 +60,7 @@ call vundle#end()
 " allow plugins by file type (required for plugins!)
 filetype plugin on
 filetype indent on
+
 
 " ============================================================================
 " Vim settings and mappings
@@ -145,21 +140,6 @@ map tm :tabm
 map tt :tabnew
 map ts :tab split<CR>
 
-
-
-
-" simple recursive grep
-" both recursive grep commands with internal or external (fast) grep
-command! -nargs=1 RecurGrep lvimgrep /<args>/gj ./**/*.* | lopen | set nowrap
-command! -nargs=1 RecurGrepFast silent exec 'lgrep! <q-args> ./**/*.*' | lopen
-" mappings to call them
-nmap ,R :RecurGrep
-nmap ,r :RecurGrepFast
-
-
-
-
-
 " better backup, swap and undos storage
 set directory=~/.vim/dirs/tmp " directory to place swap files in
 set backup " make backup files
@@ -167,9 +147,6 @@ set backupdir=~/.vim/dirs/backups " where to put backup files
 set undofile " persistent undos - undo after you re-open the file
 set undodir=~/.vim/dirs/undos
 set viminfo+=n~/.vim/dirs/viminfo
-
-" store yankring history file there too
-let g:yankring_history_dir = '~/.vim/dirs/'
 
 " create needed directories if they don't exist
 if !isdirectory(&backupdir)
@@ -184,6 +161,7 @@ endif
 
 " add path for ctrlp plugin
 set runtimepath^=~/.vim/bundle/ctrlp
+
 
 " =============================================================================
 " Plugins settings and mappings
@@ -212,16 +190,6 @@ let NERDTreeIgnore = []
 " tagbar ----------------------------------------------------------------------
 nmap <F8> :TagbarOpenAutoClose<CR>
 
-" syntastic -------------------------------------------------------------------
-"set statusline+=%#warningmsg#
-"set statusline+=%{SyntasticStatuslineFlag()}
-"set statusline+=%*
-
-"let g:syntastic_always_populate_loc_list = 1
-"let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-"let g:syntastic_check_on_wq = 0
-
 " ultisnips -------------------------------------------------------------------
 
 " Trigger configuration. Do not use <tab> if you use
@@ -239,6 +207,7 @@ let g:UltiSnipsEditSplit="vertical"
 " =============================================================================
 
 au BufRead,BufNewFile *.md set filetype=markdown
+
 
 " =============================================================================
 " Functions
@@ -266,6 +235,7 @@ function! DatabaseQuery() range
     call append(0, split(output, '\v\n'))
     normal! gg
 endfunction
+
 
 " =============================================================================
 " Mappings
