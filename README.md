@@ -1,3 +1,5 @@
-# Cristian's dotfiles
+# Dotfiles
 
-The .vimrc is heavily based on [fisa-vim-config](https://github.com/fisadev/fisa-vim-config).
+## License
+
+The MIT License (MIT). See [LICENSE](LICENSE) for more information.
